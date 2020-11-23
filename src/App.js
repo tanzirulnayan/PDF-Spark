@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -14,7 +14,8 @@ import {
   View,
   Text,
   StatusBar,
-  Dimensions
+  Dimensions,
+  Pressable
 } from 'react-native';
 
 import {
@@ -26,29 +27,60 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 import Pdf from 'react-native-pdf';
+import Icon from 'react-native-ionicons';
 
 const App: () => React$Node = () => {
+  // const isVisible = false;
+  const [isVisible, setIsVisible] = useState(false);
   const source = { uri: 'http://samples.leanpub.com/thereactnativebook-sample.pdf', cache: true };
+
+  const onPressShowHide = () => {
+    setIsVisible(!isVisible);
+  }
+  const onPressBrowseFile = () => {
+    console.warn('browse file');
+  }
+
   return (
     <>
       <StatusBar barStyle="light-content" />
-          <View style={styles.container}>
-            <Pdf
-              source={source}
-              onLoadComplete={(numberOfPages, filePath) => {
-                console.log(`number of pages: ${numberOfPages}`);
-              }}
-              onPageChanged={(page, numberOfPages) => {
-                console.log(`current page: ${page}`);
-              }}
-              onError={(error) => {
-                console.log(error);
-              }}
-              onPressLink={(uri) => {
-                console.log(`Link presse: ${uri}`)
-              }}
-              style={styles.pdf} />
+      <View style={styles.container}>
+        <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#272A2F' }}>
+          <View style={{ flex: 1 }}>
+            <Pressable onPress={onPressBrowseFile} style={{ flex: 1, borderRadius: 15, borderColor: 'black', justifyContent: 'center', alignItems: 'center', margin: 15, padding: 10, backgroundColor: '#363E49', elevation: 10 }}>
+              <Icon name="folder" color="grey" />
+              <Text style={ styles.text }>Browse File</Text>
+            </Pressable>
           </View>
+          <View style={{ flex: 1 }}>
+            <Pressable onPress={onPressShowHide} style={{ flex: 1, borderRadius: 15, borderColor: 'black', justifyContent: 'center', alignItems: 'center', margin: 15, padding: 10, backgroundColor: '#363E49', elevation: 10 }}>
+            { isVisible ? <Icon name="eye" color="grey" /> : <Icon name="eye-off" color="grey" /> }
+              <Text style={ styles.text }>Show or Hide</Text>
+            </Pressable>
+          </View>
+        </View>
+        <View style={{ flex: 5, flexDirection: 'row' }}>
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#272A2F' }}>
+            {isVisible ?
+              <Pdf
+                source={source}
+                onLoadComplete={(numberOfPages, filePath) => {
+                  console.log(`number of pages: ${numberOfPages}`);
+                }}
+                onPageChanged={(page, numberOfPages) => {
+                  console.log(`current page: ${page}`);
+                }}
+                onError={(error) => {
+                  console.log(error);
+                }}
+                onPressLink={(uri) => {
+                  console.log(`Link presse: ${uri}`)
+                }}
+                style={styles.pdf} /> : <Text style={ styles.text }>Nothing to show!</Text>}
+          </View>
+        </View>
+
+      </View>
     </>
   );
 };
@@ -56,6 +88,7 @@ const App: () => React$Node = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'center',
   },
@@ -63,6 +96,9 @@ const styles = StyleSheet.create({
     flex: 1,
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
+  },
+  text: {
+    color: 'grey'
   },
   scrollView: {
     backgroundColor: Colors.lighter,
