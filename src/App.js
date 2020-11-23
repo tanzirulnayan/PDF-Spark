@@ -31,9 +31,7 @@ import Icon from 'react-native-ionicons';
 import DocumentPicker from 'react-native-document-picker';
 
 const App: () => React$Node = () => {
-  // const source = { uri: 'http://samples.leanpub.com/thereactnativebook-sample.pdf', cache: true };
   const [isVisible, setIsVisible] = useState(false);
-  const [pdfUri, setPdfUri] = useState('');
   const [source, setSource] = useState({
     uri: 'http://samples.leanpub.com/thereactnativebook-sample.pdf',
     cache: true
