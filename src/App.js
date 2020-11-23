@@ -14,6 +14,7 @@ import {
   View,
   Text,
   StatusBar,
+  Dimensions
 } from 'react-native';
 
 import {
@@ -24,24 +25,45 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
+import Pdf from 'react-native-pdf';
+
 const App: () => React$Node = () => {
+  const source = { uri: 'http://samples.leanpub.com/thereactnativebook-sample.pdf', cache: true };
   return (
     <>
       <StatusBar barStyle="light-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <View style={styles.body}>
-            <Text>Test</Text>
+          <View style={styles.container}>
+            <Pdf
+              source={source}
+              onLoadComplete={(numberOfPages, filePath) => {
+                console.log(`number of pages: ${numberOfPages}`);
+              }}
+              onPageChanged={(page, numberOfPages) => {
+                console.log(`current page: ${page}`);
+              }}
+              onError={(error) => {
+                console.log(error);
+              }}
+              onPressLink={(uri) => {
+                console.log(`Link presse: ${uri}`)
+              }}
+              style={styles.pdf} />
           </View>
-        </ScrollView>
-      </SafeAreaView>
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  pdf: {
+    flex: 1,
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
+  },
   scrollView: {
     backgroundColor: Colors.lighter,
   },
