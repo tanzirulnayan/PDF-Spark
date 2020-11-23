@@ -28,17 +28,47 @@ import {
 
 import Pdf from 'react-native-pdf';
 import Icon from 'react-native-ionicons';
+import DocumentPicker from 'react-native-document-picker';
 
 const App: () => React$Node = () => {
-  // const isVisible = false;
+  // const source = { uri: 'http://samples.leanpub.com/thereactnativebook-sample.pdf', cache: true };
   const [isVisible, setIsVisible] = useState(false);
-  const source = { uri: 'http://samples.leanpub.com/thereactnativebook-sample.pdf', cache: true };
+  const [pdfUri, setPdfUri] = useState('');
+  const [source, setSource] = useState({
+    uri: 'http://samples.leanpub.com/thereactnativebook-sample.pdf',
+    cache: true
+  });
+
+  const onChangeUri = (uri) => {
+    setSource({
+      uri: uri,
+      cache: true
+    })
+  }
 
   const onPressShowHide = () => {
     setIsVisible(!isVisible);
   }
-  const onPressBrowseFile = () => {
-    console.warn('browse file');
+
+  const onPressBrowseFile = async () => {
+    try {
+      const res = await DocumentPicker.pick({
+        type: [DocumentPicker.types.pdf],
+      });
+      onChangeUri(res.uri);
+      console.log(
+        res.uri,
+        res.type, // mime type
+        res.name,
+        res.size
+      );
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        // User cancelled the picker, exit any dialogs or menus and move on
+      } else {
+        throw err;
+      }
+    }
   }
 
   return (
